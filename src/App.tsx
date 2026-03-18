@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import Login from "./pages/Login/Login";
+import Login from "./pages/Login/LoginPage";
 import { preAuth } from "./api/auth.api";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/DashboardPage";
