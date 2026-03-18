@@ -1,21 +1,31 @@
 import { useForm } from "react-hook-form";
 import { login } from "../../../api/auth.api";
-import qr from '../../../assets/scan-qr-code.svg'
-import eye from '../../../assets/eye-open.svg';
-import eyeClose from '../../../assets/eye-closed.svg';
+import qr from "../../../assets/scan-qr-code.svg";
+import eye from "../../../assets/eye-open.svg";
+import eyeClose from "../../../assets/eye-closed.svg";
 import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { LoginFormValues } from "../schema/passSchema";
+import { loginSchema } from "../schema/passSchema";
+import { useAuthStore } from "../../../store/useAuthStore";
 
-interface FormProps {
-  onLoginSuccess: () => void;
-}
 
 
-const Form = ({ onLoginSuccess }: FormProps) => {
+const Form = () => {
   const {
     register,
     handleSubmit,
-    // formState: { errors },
-  } = useForm();
+    formState: { errors, isValid },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    // REMOVE LATER
+    mode: "onChange",
+    defaultValues: {
+      "client ID": "",
+      password: "",
+    },
+  });
+  const setActiveTab = useAuthStore((state) => state.setActiveTab);
 
   const onSubmit = async (data: any) => {
     try {
@@ -23,7 +33,8 @@ const Form = ({ onLoginSuccess }: FormProps) => {
 
       if (result && !(result instanceof Error)) {
         console.log("Login Successful", result);
-        onLoginSuccess();
+        // onLoginSuccess();
+        setActiveTab('otp');
       } else {
         console.error("Login failed: Handle UI error here");
       }
@@ -32,22 +43,21 @@ const Form = ({ onLoginSuccess }: FormProps) => {
     }
   };
 
-  const [password, setPassword] = useState("");
-const [type, setType] = useState('password');
-const [icon, setIcon] = useState(eyeClose);
+  const [type, setType] = useState("password");
+  const [icon, setIcon] = useState(eyeClose);
 
   const handleToggle = () => {
-   if (type==='password'){
+    if (type === "password") {
       setIcon(eye);
-      setType('text')
-   } else {
-      setIcon(eyeClose)
-      setType('password')
-   }
-}
+      setType("text");
+    } else {
+      setIcon(eyeClose);
+      setType("password");
+    }
+  };
 
   return (
-    <div>
+    <div className="w-full max-w-[350px] min-h-[350px] mx-auto flex flex-col space-y-6">
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="flex flex-col gap-4">
@@ -59,8 +69,13 @@ const [icon, setIcon] = useState(eyeClose);
             type="text"
             placeholder="Enter Mobile no./Email"
             className="border border-gray-300 p-3 focus:ring-2 focus:ring-blue-500 outline-none"
-            defaultValue={"AMITH1"}
+            // defaultValue={"AMITH1"}
           />
+          {errors["client ID"] && (
+            <p className="text-red-500 text-xs">
+              {errors["client ID"]?.message}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -75,39 +90,61 @@ const [icon, setIcon] = useState(eyeClose);
               type={type} // Dynamically change type here
               placeholder="Enter password/MPIN"
               className="border border-gray-300 p-3 pr-12 focus:ring-2 focus:ring-blue-500 outline-none w-full"
-              defaultValue={"Abc@12345"}
+              // defaultValue={"Abc@12345"}
             />
-            
+
             {/* Absolute positioned icon */}
-            <span 
-              className="absolute right-4 cursor-pointer flex items-center justify-center" 
+            <span
+              className="absolute right-4 cursor-pointer flex items-center justify-center"
               onClick={handleToggle}
             >
               <img src={icon} alt="toggle visibility" className="w-5 h-5" />
             </span>
           </div>
+          {/* Validation Error Message */}
+          {errors.password && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.password.message}
+            </p>
+          )}
         </div>
       </form>
 
       {/* Lower Half */}
-      <div className="flex flex-col mt-6 gap-6">
+      <div className="flex flex-col gap-6">
         {/* Login with QR */}
         <div className="flex items-center justify-center gap-2">
-          <img src={qr} alt="QR" className="w-5 h-5"/>
-          <button className="text-[#0F62FE] font-semibold text-xs cursor-pointer">Login with QR code</button>
+          <img src={qr} alt="QR" className="w-5 h-5" />
+          <button className="text-[#0F62FE] font-semibold text-xs cursor-pointer">
+            Login with QR code
+          </button>
         </div>
         {/* Login Button */}
         <button
           type="submit"
-          className="w-full bg-[#0F62FE] text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+          disabled={!isValid}
+          // className="w-full bg-[#0F62FE] text-white py-3 rounded-sm font-semibold hover:bg-blue-700 transition"
+          className={`w-full py-3 rounded-sm font-semibold transition ${
+            isValid
+              ? "bg-[#0F62FE] text-white hover:bg-blue-700 cursor-pointer"
+              : "bg-[#ECEDEE] text-gray-500"
+          }`}
           onClick={handleSubmit(onSubmit)}
         >
           Login
         </button>
 
         <div className="flex justify-between items-center ">
-          <span className="font-semibold cursor-pointer text-[#0F62FE] ">Forgot Password</span>
-          <span className="cursor-pointer text-[#0F62FE] font-semibold">Guest Login</span>
+          <span
+            className="font-semibold cursor-pointer text-[#0F62FE]"
+            onClick={() => {setActiveTab('forgotPass')}}
+          >
+            {" "}
+            Forgot Password
+          </span>
+          <span className="cursor-pointer text-[#0F62FE] font-semibold">
+            Guest Login
+          </span>
         </div>
       </div>
     </div>

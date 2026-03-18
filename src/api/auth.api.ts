@@ -11,7 +11,6 @@ export const preAuth = async () => {
   }
 };
 
-
 export const login = async (username: string, password: string) => {
   try {
     const response = await api.post("/v1/api/auth/login", {
@@ -24,7 +23,6 @@ export const login = async (username: string, password: string) => {
   }
 };
 
-
 export const validateOTP = async (username: string, otp: string) => {
   try {
     const response = await api.post("/v2/api/auth/validate-otp", {
@@ -35,5 +33,32 @@ export const validateOTP = async (username: string, otp: string) => {
   } catch (error: any) {
     console.error("Server error details: ", error.response?.data);
     return error;
+  }
+};
+
+export const forgetUserID = async (panNumber: string, emailId: string) => {
+  try {
+    const response = await api.post("/v1/api/auth/forgot-user-id", {
+      panNumber,
+      emailId,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Server error details: ", error.response?.data);
+    throw error;
+  }
+};
+
+
+export const forgetPassword = async (panNumber: string, username: string) => {
+  try {
+    const response = await api.post("/v1/api/auth/forgot-password", {
+      panNumber,
+      username,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Server error details: ", error.response?.data);
+    throw error;
   }
 };

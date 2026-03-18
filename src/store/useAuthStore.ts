@@ -24,17 +24,23 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 type AuthState = {
+   activeTab: TabType; // Added activeTab
   accessToken: string | null;
   setAccessToken: (token: string | null) => void;
+  setActiveTab: (tab: TabType) => void; // Added setter
   logout: () => void;
 };
+
+type TabType = "login" | "otp" | "forgotPass";
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
+      activeTab: "login", // Default state
       accessToken: null, // Initial state, but middleware will overwrite this from storage
       setAccessToken: (token) => set({ accessToken: token }),
-      logout: () => set({ accessToken: null }),
+      setActiveTab: (tab) => set({ activeTab: tab }),
+      logout: () => set({ accessToken: null, activeTab: "login" }),
     }),
     {
       name: "auth_token", // The localStorage key
