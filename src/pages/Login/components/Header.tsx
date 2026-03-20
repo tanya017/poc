@@ -5,13 +5,13 @@ interface LoginHeaderProps {
 }
 function LoginHeader({ label }: LoginHeaderProps) {
   return (
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <img src={header} alt="Logo" className="w-8 h-8" />
+      <>
+        <div className="flex items-center gap-2">
+          <img src={header} alt="Logo" className="w-8 h-12" />
           <span className="font-bold text-lg">Nest App</span>
         </div>
-        <h1 className="font-semibold text-2xl text-gray-800">{label}</h1>
-      </div>
+        <h1 className="font-semibold text-xl text-gray-800">{label}</h1>
+      </>
 
   );
 }

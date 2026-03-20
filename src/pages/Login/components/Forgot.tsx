@@ -13,27 +13,35 @@ function ForgotPassword() {
   } = useForm();
 
   const setActiveTab = useAuthStore((state) => state.setActiveTab);
+  const setShowForgotIdSuccess = useAuthStore(
+    (state) => state.setShowForgotIdSuccess,
+  );
   const [toggle, setToggle] = useState("password");
 
   const handleTabChange = (tab: string) => {
-  setToggle(tab);
-  reset(); // This clears all fields and resets them to their default values
-};
+    setToggle(tab);
+    reset(); // This clears all fields and resets them to their default values
+  };
 
   const onSubmit = async (data: any) => {
     if (toggle === "password") {
+      // Forgot Password
       try {
         const result = await forgetPassword(data.PAN, data["Client ID"]);
-
         console.log("Forget Password executed", result);
+        setActiveTab("forgotPassOtp");
       } catch (error) {
         console.error("Login failed: Handle UI error here", error);
       }
     } else {
+      // Forgot User ID
       try {
         const result = await forgetUserID(data.PAN, data["Email"]);
-
         console.log("Forget UserID executed", result);
+        // 1. Set success state to true
+        setShowForgotIdSuccess(true);
+        // 2. Redirect to login tab
+        setActiveTab("login");
       } catch (error) {
         console.error("Login failed: Handle UI error here", error);
       }
@@ -42,7 +50,6 @@ function ForgotPassword() {
 
   return (
     <div className="flex flex-col gap-2.5">
-      
       {/* Top header */}
       <div className="flex w-full max-w-md gap-2.75 border-b border-[#ECEDEE]">
         <button
@@ -54,7 +61,6 @@ function ForgotPassword() {
             <div className="absolute bottom-0 left-0 w-full h-[3px] bg-[#0F62FE]" />
           )}
         </button>{" "}
-        {/* Client ID */}
         <button
           className={`relative flex-1 py-4  px-2 text-center font-semibold text-sm transition-colors outline-none ${toggle === "userID" ? "text-[#0F62FE]" : "text-[#555555]"}`}
           onClick={() => handleTabChange("userID")}
@@ -64,7 +70,6 @@ function ForgotPassword() {
             <div className="absolute bottom-0 left-0 w-full h-[3px] bg-[#0F62FE]" />
           )}
         </button>{" "}
-        {/* Client ID */}
       </div>
 
       {/* Form Details */}
@@ -78,7 +83,6 @@ function ForgotPassword() {
               <input
                 type="text"
                 {...register("Client ID", { required: true })}
-                // className="border border-gray-300 p-3 focus:ring-2 focus:ring-blue-500 outline-none"
                 className="border border-[#ECEDEE] p-4 rounded-sm outline-none"
                 defaultValue={"AMITH1"}
                 placeholder="Enter user ID"
@@ -92,7 +96,6 @@ function ForgotPassword() {
               <input
                 type="text"
                 {...register("Email", { required: true })}
-                // className="border border-gray-300 p-3 focus:ring-2 focus:ring-blue-500 outline-none"
                 className="border border-[#ECEDEE] p-4 rounded-sm outline-none"
                 defaultValue={"amit.gupta@omnenest.com"}
                 placeholder="Enter Mobile / Email"

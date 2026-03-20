@@ -62,3 +62,30 @@ export const forgetPassword = async (panNumber: string, username: string) => {
     throw error;
   }
 };
+
+export const authenticateOtp = async (otp: number, username: string, isUserBlocked: boolean) => {
+  try {
+    const response = await api.post("/v1/api/auth/authenticate-otp", {
+      otp,
+      username,
+      isUserBlocked,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Server error details: ", error.response?.data);
+    throw error;
+  }
+};
+
+export const unblockUser = async (username: string, panNumber: string) => {
+  try {
+    const response = await api.post("/v1/api/auth/unblock-user", {
+      username,
+      panNumber,
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Server error details: ", error.response?.data);
+    throw error;
+  }
+};

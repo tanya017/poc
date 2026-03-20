@@ -1,4 +1,19 @@
 @import "tailwindcss";
+@layer base {
+  /* Removes the default Microsoft Edge eye icon */
+  input::-ms-reveal,
+  input::-ms-clear {
+    display: none;
+  }
+
+  /* Removes Chrome/Safari/Edge auto-fill icons if they conflict */
+  input::-webkit-contacts-auto-fill-button,
+  input::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+    pointer-events: none;
+  }
+}
 /* :root {
   --text: #6b6375;
   --text-h: #08060d;
