@@ -49,7 +49,6 @@ export const forgetUserID = async (panNumber: string, emailId: string) => {
   }
 };
 
-
 export const forgetPassword = async (panNumber: string, username: string) => {
   try {
     const response = await api.post("/v1/api/auth/forgot-password", {
@@ -63,7 +62,11 @@ export const forgetPassword = async (panNumber: string, username: string) => {
   }
 };
 
-export const authenticateOtp = async (otp: number, username: string, isUserBlocked: boolean) => {
+export const authenticateOtp = async (
+  otp: number,
+  username: string,
+  isUserBlocked: boolean,
+) => {
   try {
     const response = await api.post("/v1/api/auth/authenticate-otp", {
       otp,

@@ -4,11 +4,8 @@ import { useAuthStore } from "../../../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 
-interface OtpProps {
-  username?: string;
-}
-
-function Otp({ username = "AMITH1" }: OtpProps) {
+function Otp() {
+  const username = useAuthStore((state) => state.username);
   const { control, handleSubmit, setValue, watch } = useForm({
     defaultValues: { otp: ["", "", "", ""] },
   });
@@ -63,13 +60,12 @@ function Otp({ username = "AMITH1" }: OtpProps) {
     } else if (activeTab === "forgotPassOtp") {
       try {
         const result = await authenticateOtp(Number(fullOtp), username, true);
-        if(!isLocked) {
+        if (isLocked) {
           setActiveTab("set-password");
         } else {
-          setActiveTab('login');
-        }  
-          console.log("authenticate otp executed", result);
-
+          setActiveTab("login");
+        }
+        console.log("authenticate otp executed", result);
       } catch (error) {
         console.error("Submit Error", error);
       }

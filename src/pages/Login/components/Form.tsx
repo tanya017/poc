@@ -24,13 +24,13 @@ const Form = () => {
     },
   });
 
-  useEffect(() => {
-    setIsLocked(false);
-  },[]);
-
+  // useEffect(() => {
+  //   setIsLocked(false);
+  // }, []);
 
   const setActiveTab = useAuthStore((state) => state.setActiveTab);
-  const { isLocked, setIsLocked} = useAuthStore();
+  const { isLocked, setIsLocked } = useAuthStore();
+  const setUsername = useAuthStore((state) => state.setUsername);
   const showForgotIdSuccess = useAuthStore(
     (state) => state.showForgotIdSuccess,
   );
@@ -38,10 +38,25 @@ const Form = () => {
     (state) => state.setShowForgotIdSuccess,
   );
 
+  useEffect(() => {
+    // Clear everything when the component first loads
+    setIsLocked(false);
+    setShowForgotIdSuccess(false);
+
+    // Optional: Clear when the user leaves the page
+    return () => {
+      setShowForgotIdSuccess(false);
+      setIsLocked(false);
+    };
+  }, [setIsLocked, setShowForgotIdSuccess]);
+
   const onSubmit = async (data: any) => {
     try {
-      setIsLocked(false);
-      const result = await login(data["client ID"], data.password);
+      // setIsLocked(false);
+      // setShowForgotIdSuccess(false); // Add this line
+      const clientId = data["client ID"];
+      // const result = await login(data["client ID"], data.password);
+      const result = await login(clientId, data.password);
 
       if (result?.status === 423 || result?.errorCode === "ACCOUNT_LOCKED") {
         console.log(result.status);
@@ -52,6 +67,7 @@ const Form = () => {
       if (result && !(result instanceof Error)) {
         console.log("Login Successful", result);
         // onLoginSuccess();
+        setUsername(clientId);
         setActiveTab("otp");
       } else {
         console.error("Login failed: Handle UI error here");
@@ -75,7 +91,8 @@ const Form = () => {
   };
 
   return (
-    <div className="w-full max-w-[350px] min-h-[350px] mx-auto flex flex-col space-y-6">
+    // <div className="w-full max-w-[350px] min-h-[350px] mx-auto flex flex-col space-y-6">
+    <div className="w-full max-w-87.5 mx-auto flex flex-col gap-5 sm:gap-6">
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="flex flex-col gap-4">
@@ -171,7 +188,7 @@ const Form = () => {
 
         {showForgotIdSuccess && (
           <div className="flex items-center gap-3 p-3 bg-[#EBF5F0] border border-dashed border-[#0F62FE] rounded-sm relative">
-            <div className="flex-shrink-0 flex items-center justify-center w-5 h-5 border border-[#107D4F] rounded-full">
+            <div className="shrink-0 flex items-center justify-center w-5 h-5 border border-[#107D4F] rounded-full">
               <span className="text-[#107D4F] text-[10px]">✓</span>
             </div>
 
@@ -192,12 +209,12 @@ const Form = () => {
         {isLocked && (
           <div className="flex items-center gap-3 p-3 mt-2 bg-[#FFF1F1] border border-[#FFDADA] rounded-md animate-in fade-in slide-in-from-top-1">
             {/* Warning Icon */}
-            <div className="flex-shrink-0 flex items-center justify-center w-5 h-5 border border-[#555555] rounded-full text-[#555555] text-[10px] font-bold">
+            <div className="shrink-0 flex items-center justify-center w-5 h-5 border border-[#555555] rounded-full text-[#555555] text-[10px] font-bold">
               i
             </div>
 
             <div className="flex flex-1 items-center justify-between">
-              <p className="text-[#BA1A1A] text-xs leading-tight font-medium max-w-[180px]">
+              <p className="text-[#BA1A1A] text-xs leading-tight font-medium max-w-45">
                 Your account is locked, to continue trading please unblock
               </p>
               <button

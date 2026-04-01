@@ -1,4 +1,9 @@
+@import url("https://googleapis.com");
 @import "tailwindcss";
+/* @theme {
+  --font-inter: "Inter", ui-sans-serif, system-ui, sans-serif;
+} */
+
 @layer base {
   /* Removes the default Microsoft Edge eye icon */
   input::-ms-reveal,
@@ -13,6 +18,17 @@
     display: none !important;
     pointer-events: none;
   }
+}
+
+/* For Webkit-based browsers (Chrome, Safari and Opera) */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 /* :root {
   --text: #6b6375;
